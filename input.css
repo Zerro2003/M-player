@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+.inp {
+  @layer bg-green {
+    background-color: var(--color-green-500);
+  }
+}
