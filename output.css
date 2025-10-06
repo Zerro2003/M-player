@@ -8,14 +8,9 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --color-amber-200: oklch(92.4% 0.12 95.746);
-    --color-amber-300: oklch(87.9% 0.169 91.605);
-    --color-amber-600: oklch(66.6% 0.179 58.318);
     --color-lime-300: oklch(89.7% 0.196 126.665);
     --color-green-500: oklch(72.3% 0.219 149.579);
-    --color-rose-400: oklch(71.2% 0.194 13.428);
-    --color-gray-800: oklch(27.8% 0.033 256.848);
     --color-black: #000;
-    --color-white: #fff;
     --spacing: 0.25rem;
     --radius-2xl: 1rem;
     --radius-3xl: 1.5rem;
@@ -175,20 +170,14 @@
   .mx-20 {
     margin-inline: calc(var(--spacing) * 20);
   }
-  .mt-10 {
-    margin-top: calc(var(--spacing) * 10);
+  .mt-4 {
+    margin-top: calc(var(--spacing) * 4);
   }
-  .mt-12 {
-    margin-top: calc(var(--spacing) * 12);
-  }
-  .mt-20 {
-    margin-top: calc(var(--spacing) * 20);
+  .mt-8 {
+    margin-top: calc(var(--spacing) * 8);
   }
   .mt-30 {
     margin-top: calc(var(--spacing) * 30);
-  }
-  .mt-\[20px\] {
-    margin-top: 20px;
   }
   .flex {
     display: flex;
@@ -241,32 +230,14 @@
   .border-black {
     border-color: var(--color-black);
   }
-  .border-rose-400 {
-    border-color: var(--color-rose-400);
-  }
-  .bg-amber-300 {
-    background-color: var(--color-amber-300);
-  }
-  .bg-amber-600 {
-    background-color: var(--color-amber-600);
-  }
-  .bg-gray-800 {
-    background-color: var(--color-gray-800);
-  }
   .bg-lime-300 {
     background-color: var(--color-lime-300);
   }
   .p-2 {
     padding: calc(var(--spacing) * 2);
   }
-  .p-6 {
-    padding: calc(var(--spacing) * 6);
-  }
   .text-center {
     text-align: center;
-  }
-  .text-white {
-    color: var(--color-white);
   }
   .underline {
     text-decoration-line: underline;
