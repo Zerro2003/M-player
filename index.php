@@ -1,3 +1,4 @@
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -6,10 +7,10 @@
     <link rel="stylesheet" href="output.css" />
   </head>
   <body>
-    
-    <form
+    <div>
+      <form
       class="flex flex-row gap-8 h-20 items-center justify-center mt-30 mx-20 border-2 rounded-3xl"
-      action="./"
+      action=""
       method="POST"
     >
       <input
@@ -40,25 +41,34 @@
         Add Song
       </button>
     </form>
-    <div
-      class="flex flex-row gap-8 h-20 items-center justify-center mx-20 border-2 rounded-3xl mt-8"
-    ></div>
+    </div>
+    
+    <div class="flex flex-col bg-red-600 h-50 justify-between mt-10 mx-40 rounded-3xl overflow-auto">
+      <div class="flex flex-row gap-52 text-white justify-between bg-amber-400 px-8 rounded-3xl">
+        <h1 class="text-2xl font-bold">Song Title</h1> <h1 class="text-2xl font-bold">Artist</h1> <h1 class="text-2xl font-bold">Duration</h1>
+      </div>
+      
+    
+    </div>
     <?php
 include 'connect.php';
-$title = isset($_POST['title']) ? $_POST['title'] : '';
-$artist = isset($_POST['artist']) ? $_POST['artist'] : '';
-$duration = isset($_POST['duration']) ? $_POST['duration'] : '';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = isset($_POST['title']) ? $_POST['title'] : '';
+    $artist = isset($_POST['artist']) ? $_POST['artist'] : '';
+    $duration = isset($_POST['duration']) ? $_POST['duration'] : '';
 
-$sql = "INSERT INTO songs (title, artist, duration) VALUES ('$title', '$artist', '$duration')";
+    $sql = "INSERT INTO songs (title, artist, duration) VALUES ('$title', '$artist', '$duration')";
 
-// if (mysqli_query($conn, $sql)) {
-//     echo "✅ Song added successfully!";
-// } else {
-//     echo "❌ Error: " . mysqli_error($conn);
-// }
+    if (mysqli_query($conn, $sql)) {
+        echo "<script>alert('inserted successfully')</script>";
+    } else {
+        echo "<script>alert('Error: " . mysqli_error($conn) . "')</script>";
+    }
+}
 
 mysqli_close($conn);
 ?>
   </body>
+  
 </html>
