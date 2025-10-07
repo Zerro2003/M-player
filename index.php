@@ -44,10 +44,25 @@
     </div>
     
     <div class="flex flex-col bg-red-600 h-50 justify-between mt-10 mx-40 rounded-3xl overflow-auto">
-      <div class="flex flex-row gap-52 text-white justify-between bg-amber-400 px-8 rounded-3xl">
-        <h1 class="text-2xl font-bold">Song Title</h1> <h1 class="text-2xl font-bold">Artist</h1> <h1 class="text-2xl font-bold">Duration</h1>
-      </div>
       
+          
+      <?php 
+include 'connect.php';
+$sql = "SELECT title, artist, duration FROM songs";
+$result = mysqli_query($conn, $sql);
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "
+        <div class='flex flex-row gap-52 mt-4 text-white justify-between bg-amber-400 px-8 rounded-3xl mx-4'>
+        <h1 class='text-2xl font-bold'>".$row['title']."</h1> <h1 class='text-2xl font-bold'>".$row['artist']."</h1> <h1 class='text-2xl font-bold'>".$row['duration']."</h1>
+      </div>";
+    }
+} else {
+    echo "<h1 class='text-2xl font-bold'>You have no saved music Yet!</h1> ";
+}
+
+mysqli_close($conn);
+?>
     
     </div>
     <?php
