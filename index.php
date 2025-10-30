@@ -1,88 +1,104 @@
+<?php
+session_start();
 
+if (isset($_SESSION['user_id'])) {
+    header('Location: playlist.php');
+    exit;
+}
+
+require 'connect.php';
+
+$flashMessage = $_SESSION['flash_message'] ?? '';
+unset($_SESSION['flash_message']);
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    if ($email === '' || $password === '') {
+        $error = 'Email and password are required.';
+    } else {
+        $stmt = mysqli_prepare($conn, 'SELECT id, email, p_word FROM users WHERE email = ? LIMIT 1');
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, 's', $email);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_bind_result($stmt, $userId, $userEmail, $storedPassword);
+
+            if (mysqli_stmt_fetch($stmt)) {
+                if ($storedPassword === $password) {
+                    $_SESSION['user_id'] = (int) $userId;
+                    $_SESSION['user_email'] = $userEmail;
+                    mysqli_stmt_close($stmt);
+                    mysqli_close($conn);
+                    header('Location: playlist.php');
+                    exit;
+                }
+            }
+
+            mysqli_stmt_close($stmt);
+            $error = 'Invalid email or password.';
+        } else {
+            $error = 'Unable to process your login right now.';
+        }
+    }
+}
+
+mysqli_close($conn);
+?>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Music</title>
+    <title>Welcome Back</title>
     <link rel="stylesheet" href="output.css" />
+    <link rel="stylesheet" href="login.css" />
   </head>
-  <body>
-    <div class="px-4">
-      <form
-      class="flex flex-col gap-4 md:flex-row md:gap-6 md:items-center justify-center mt-10 mx-auto max-w-5xl border-2 border-lime-500 rounded-3xl p-6 bg-white/5 backdrop-blur-sm"
-      action=""
-      method="POST"
-    >
-      <input
-  class="border-2 border-amber-200 text-center p-3 rounded-2xl w-full md:flex-1 min-w-0"
-        type="text"
-        name="title"
-        placeholder="Song Title Here"
-        required
-      />
-      <input
-  class="border-2 border-amber-200 text-center p-3 rounded-2xl w-full md:flex-1 min-w-0"
-        type="text"
-        name="artist"
-        placeholder="Artist"
-        required
-      />
-      <input
-  class="border-2 border-amber-200 text-center p-3 rounded-2xl w-full md:w-36"
-        type="text"
-        name="duration"
-        placeholder="Duration (MM:SS)"
-        required
-      />
-      <button
-  class="bg-lime-300 p-3 border-black border-b-2 rounded-2xl font-semibold w-full md:w-auto"
-        type="submit"
-      >
-        Add Song
-      </button>
-    </form>
+  <body class="login-body">
+    <div class="login-card">
+      <div class="login-card__header">
+        <h1>Music Player Login</h1>
+        <p>Sign in to manage your playlist.</p>
+      </div>
+
+      <?php if ($flashMessage !== ''): ?>
+        <div class="alert alert--success">
+          <?php echo htmlspecialchars($flashMessage); ?>
+        </div>
+      <?php endif; ?>
+
+      <?php if ($error !== ''): ?>
+        <div class="alert alert--error">
+          <?php echo htmlspecialchars($error); ?>
+        </div>
+      <?php endif; ?>
+
+      <form method="POST" action="index.php" class="login-form">
+        <label class="form-field">
+          <span>Email</span>
+          <input
+            type="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+            autocomplete="email"
+          />
+        </label>
+        <label class="form-field">
+          <span>Password</span>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+            autocomplete="current-password"
+          />
+        </label>
+        <button type="submit" class="login-button">
+          Log In
+        </button>
+      </form>
     </div>
-
-  <div class="bg-gradient-to-tl from-[#15803d] via-[#115e59] to-[#164e63] flex flex-col mt-10 mx-4 sm:mx-8 lg:mx-auto max-w-5xl rounded-3xl overflow-hidden border-2 border-emerald-800 shadow-xl">
-
-      <?php
-include 'connect.php';
-$sql = "SELECT title, artist, duration FROM songs";
-$result = mysqli_query($conn, $sql);
-if (mysqli_num_rows($result) > 0) {
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "
-    <div class='flex flex-col sm:flex-row gap-3 sm:gap-6 mt-4 text-white justify-between bg-gradient-to-r from-[#2dd4bf] to-[#1f2937] px-6 py-4 rounded-3xl mx-4 shadow-lg sm:items-center'>
-    <h1 class='text-lg sm:text-xl font-bold truncate sm:flex-1'>🎵  ".$row['title']."</h1> <h1 class='text-base sm:text-lg font-semibold sm:w-40 truncate'>".$row['artist']."</h1> <h1 class='text-base sm:text-lg font-semibold sm:w-24 text-right'>".$row['duration']."</h1>
-      </div>";
-    }
-} else {
-  echo "<h1 class='mt-10 text-xl sm:text-2xl font-bold text-center text-white px-6'>You have no saved music Yet!</h1> ";
-}
-
-mysqli_close($conn);
-?>
-    
-    </div>
-    <?php
-include 'connect.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = isset($_POST['title']) ? $_POST['title'] : '';
-    $artist = isset($_POST['artist']) ? $_POST['artist'] : '';
-    $duration = isset($_POST['duration']) ? $_POST['duration'] : '';
-
-    $sql = "INSERT INTO songs (title, artist, duration) VALUES ('$title', '$artist', '$duration')";
-
-    if (mysqli_query($conn, $sql)) {
-        echo "<script>alert('inserted successfully')</script>";
-    } else {
-        echo "<script>alert('Error: " . mysqli_error($conn) . "')</script>";
-    }
-}
-
-mysqli_close($conn);
-?>
   </body>
-  
 </html>
